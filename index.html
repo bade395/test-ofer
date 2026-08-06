@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منظومة عروض الأسعار - شركة النسر الثاقب لتأجير السيارات</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Rubik:ital,wght@0,300..900;1,300..900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -43,10 +42,9 @@
         </div>
     </header>
 
-    <!-- Document Preview & Printable Area -->
     <main class="document-wrapper">
         
-        <!-- PAGE 1: الصفحة الأولى -->
+        <!-- الصفحة الأولى: جدول 1 + الإجمالي تحت الجدول مباشر + الختم -->
         <div class="a4-page page-1">
             <header class="doc-header-fixed">
                 <div class="company-brand">
@@ -60,7 +58,7 @@
             </header>
 
             <div class="doc-inner-body">
-                <div>
+                <div class="content-block">
                     <div class="doc-title-bar">
                         <h2 class="doc-title">عرض اسعار</h2>
                     </div>
@@ -86,7 +84,6 @@
                         <p class="intro-text">يسعدنا ان نقدم لكم عرض السعر الخاصة بخدمة تأجير المركبات والموضح بياناتها في الجدول التالي</p>
                     </section>
 
-                    <!-- جدول الأسعار -->
                     <section class="items-table-section">
                         <table class="quote-table" id="items-table">
                             <thead>
@@ -107,7 +104,7 @@
                             </tbody>
                         </table>
 
-                        <!-- جدول الإجماليات (يأتي مباشر بعد نهاية جدول الأسعار) -->
+                        <!-- جدول الإجماليات لاصق بجدول البنود -->
                         <div class="totals-summary-container">
                             <table class="totals-table">
                                 <colgroup>
@@ -130,12 +127,9 @@
                         </div>
                     </section>
 
-                    <!-- الختم والتوقيع (مباشرة تحت الإجماليات) -->
+                    <!-- الختم مباشرة بعد جدول الإجماليات -->
                     <div class="closing-section-wrapper">
-                        <div class="closing-wish">
-                            <p>املين ان ينال عرضنا هذا رضاكم</p>
-                        </div>
-
+                        <p class="closing-wish">املين ان ينال عرضنا هذا رضاكم</p>
                         <div class="closing-salutation-bottom">
                             <p class="salutation-text">،مع خالص التحية والتقدير</p>
                             <div class="company-sign-wrapper">
@@ -160,7 +154,7 @@
             </footer>
         </div>
 
-        <!-- PAGE 2: تكملة البنود -->
+        <!-- الصفحة الثانية: تكملة البنود (تظهر وتختفي ديناميكياً) -->
         <div class="a4-page page-2" id="page-overflow-items" style="display: none;">
             <header class="doc-header-fixed">
                 <div class="company-brand">
@@ -174,7 +168,7 @@
             </header>
 
             <div class="doc-inner-body">
-                <div>
+                <div class="content-block">
                     <div class="doc-title-bar">
                         <h2 class="doc-title">عرض اسعار (تكملة البنود)</h2>
                     </div>
@@ -213,7 +207,7 @@
             </footer>
         </div>
 
-        <!-- PAGE TERMS & BANK: صفحة الشروط والأحكام -->
+        <!-- الصفحة (ثابتة): الشروط والأحكام والحساب البنكي -->
         <div class="a4-page page-terms" id="page-terms-bank">
             <header class="doc-header-fixed">
                 <div class="company-brand">
@@ -227,7 +221,7 @@
             </header>
 
             <div class="doc-inner-body">
-                <div>
+                <div class="content-block">
                     <section class="terms-section" id="terms-all">
                         <div class="bilingual-terms-grid">
                             <div class="terms-col-ar">
