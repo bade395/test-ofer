@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemsTbody2 = document.getElementById('items-tbody-2');
     const overflowPage = document.getElementById('page-overflow-items');
     
+    const page1InnerBody = document.querySelector('.page-1 .doc-inner-body');
     const tableSection1 = document.getElementById('table-section-1');
     const tableSection2 = document.getElementById('table-section-2');
     const summaryAndStampBlock = document.getElementById('quote-summary-and-stamp');
@@ -95,7 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let row = itemsTbody.rows[index];
             if (!row && itemsTbody2) {
-                row = itemsTbody2.rows[index - 11];
+                // للبحث عن الصف في الجدول الثاني إن وجد
+                const page1Count = itemsTbody.rows.length;
+                row = itemsTbody2.rows[index - page1Count];
             }
 
             if (row) {
@@ -163,35 +166,46 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // التوزيع الديناميكي التلقائي حسب المساحة المتوفرة دون تحديد رقم ثوابت
     function renderItems() {
         itemsTbody.innerHTML = '';
         if (itemsTbody2) itemsTbody2.innerHTML = '';
+        
+        // إرجاع الإجمالي والختم مبدئياً للصفحة الأولى للفحص
+        tableSection1.after(summaryAndStampBlock);
+        overflowPage.style.display = 'none';
 
-        // تم رفع حد الصفحة الأولى إلى 11 صفاً حتى تمتلئ الورقة بالكامل
-        const MAX_PAGE1_ITEMS = 11;
-        const page1Items = items.slice(0, MAX_PAGE1_ITEMS);
-        const page2Items = items.slice(MAX_PAGE1_ITEMS);
+        let page1Count = 0;
+        const maxAllowedHeight = page1InnerBody.clientHeight;
 
-        page1Items.forEach((item, idx) => {
+        for (let i = 0; i < items.length; i++) {
             const tr = document.createElement('tr');
-            tr.setAttribute('data-row', idx);
-            tr.innerHTML = buildRowHtml(item, idx);
+            tr.setAttribute('data-row', i);
+            tr.innerHTML = buildRowHtml(items[i], i);
             itemsTbody.appendChild(tr);
-        });
 
-        if (page2Items.length > 0) {
+            // فحص هل يتجاوز المحتوى حدود الصفحة الأولى
+            if (page1InnerBody.scrollHeight > maxAllowedHeight) {
+                // إذا تجاوز، نقوم بحذف الصف الحالي من الصفحة الأولى وترحيله وباقي العناصر للصفحة الثانية
+                itemsTbody.removeChild(tr);
+                page1Count = i;
+                break;
+            } else {
+                page1Count = i + 1;
+            }
+        }
+
+        // إذا كان هناك عناصر زائدة عن استيعاب الصفحة الأولى
+        if (page1Count < items.length) {
             overflowPage.style.display = 'block';
-            page2Items.forEach((item, idx) => {
-                const actualIdx = MAX_PAGE1_ITEMS + idx;
+            for (let i = page1Count; i < items.length; i++) {
                 const tr = document.createElement('tr');
-                tr.setAttribute('data-row', actualIdx);
-                tr.innerHTML = buildRowHtml(item, actualIdx);
+                tr.setAttribute('data-row', i);
+                tr.innerHTML = buildRowHtml(items[i], i);
                 itemsTbody2.appendChild(tr);
-            });
+            }
+            // نقل الإجمالي والختم تحت جدول الصفحة الثانية
             tableSection2.after(summaryAndStampBlock);
-        } else {
-            overflowPage.style.display = 'none';
-            tableSection1.after(summaryAndStampBlock);
         }
 
         updateTotals();
