@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "FORD TAURUS", "KIA CARNIVAL", "HYUNDAI STARIA STANDARD 9 SEATER", "HYUNDAI STARIA 7 SEATER LUXURY", "CHEVROLET SUBURBAN 4X2",
         "TOYOTA FORTUNER GX2 4X4 (4CYL)", "NISSAN X-TRAIL", "GEELY TUGELLA FULL OPTION", "TOYOTA PRADO TX (4 CYL)", "FORD EXPLORER",
         "CHEVROLET TAHOE 4X4", "FORD BRONCO", "TOYOTA PRADO 6 CYL", "TOYOTA LANDCRUISER GXR", "NISSAN PATROL 6CYL",
-        "RANGE ROVER EVOQUE R- DYNAMIC S", "AUDI Q5", "MERCEDES GLC C200", "BMW X4", "AUDI Q8", "MERCEDES A CLASS", "BMX X2",
+        "RANGE ROVER EVOQUE R- DDYNAMIC S", "AUDI Q5", "MERCEDES GLC C200", "BMW X4", "AUDI Q8", "MERCEDES A CLASS", "BMX X2",
         "MERCEDES C CLASS", "GENESIS G80", "MERCEDES CLA 200", "AUDI Q3", "MERCEDES E CLASS", "BMW 5 SERIES", "MERCEDES VIANO",
         "BMW 730", "AUDI A8", "MERCEDES S450", "ISUZU DMAX DOUBLE CAB 4X2 MANUAL 4 CYLINDER", "ISUZU DMAX DOUBLE CAB 4X4 MANUAL 4 CYLINDER",
         "ISUZU LS DOUBLE CAB 4X2 MANUAL 6 CYLINDER", "ISUZU LS DOUBLE CAB 4X4 MANUAL 6 CYLINDER", "ISUZU LS DOUBLE CAB 4X4 AUTOMATIC 6 CYLINDER",
@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemsTbody2 = document.getElementById('items-tbody-2');
     const overflowPage = document.getElementById('page-overflow-items');
     
-    const page1InnerBody = document.querySelector('.page-1 .doc-inner-body');
     const tableSection1 = document.getElementById('table-section-1');
     const tableSection2 = document.getElementById('table-section-2');
     const summaryAndStampBlock = document.getElementById('quote-summary-and-stamp');
@@ -51,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnGenRef = document.getElementById('btn-gen-ref');
     const btnReset = document.getElementById('btn-reset');
     const btnPrintPdf = document.getElementById('btn-print-pdf');
+
+    // الحد الأقصى للمسموح به في الصفحة الأولى قبل التدوير للصفحة الثانية
+    const MAX_PAGE1_CAPACITY = 20;
 
     function formatMoney(amount, decimals = 1) {
         if (isNaN(amount)) return '0.0';
@@ -81,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateTotals() {
         let totalNet = 0, totalVat = 0, totalGrand = 0;
+        const page1Count = Math.min(items.length, MAX_PAGE1_CAPACITY);
 
         items.forEach((item, index) => {
             const qty = parseNum(item.quantity, false);
@@ -96,8 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let row = itemsTbody.rows[index];
             if (!row && itemsTbody2) {
-                // للبحث عن الصف في الجدول الثاني إن وجد
-                const page1Count = itemsTbody.rows.length;
                 row = itemsTbody2.rows[index - page1Count];
             }
 
@@ -166,46 +167,35 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // التوزيع الديناميكي التلقائي حسب المساحة المتوفرة دون تحديد رقم ثوابت
     function renderItems() {
         itemsTbody.innerHTML = '';
         if (itemsTbody2) itemsTbody2.innerHTML = '';
-        
-        // إرجاع الإجمالي والختم مبدئياً للصفحة الأولى للفحص
-        tableSection1.after(summaryAndStampBlock);
-        overflowPage.style.display = 'none';
 
-        let page1Count = 0;
-        const maxAllowedHeight = page1InnerBody.clientHeight;
+        // يستوعب حتى 20 صفاً في الصفحة الأولى ديناميكياً
+        const page1Cutoff = Math.min(items.length, MAX_PAGE1_CAPACITY);
+        const page1Items = items.slice(0, page1Cutoff);
+        const page2Items = items.slice(page1Cutoff);
 
-        for (let i = 0; i < items.length; i++) {
+        page1Items.forEach((item, idx) => {
             const tr = document.createElement('tr');
-            tr.setAttribute('data-row', i);
-            tr.innerHTML = buildRowHtml(items[i], i);
+            tr.setAttribute('data-row', idx);
+            tr.innerHTML = buildRowHtml(item, idx);
             itemsTbody.appendChild(tr);
+        });
 
-            // فحص هل يتجاوز المحتوى حدود الصفحة الأولى
-            if (page1InnerBody.scrollHeight > maxAllowedHeight) {
-                // إذا تجاوز، نقوم بحذف الصف الحالي من الصفحة الأولى وترحيله وباقي العناصر للصفحة الثانية
-                itemsTbody.removeChild(tr);
-                page1Count = i;
-                break;
-            } else {
-                page1Count = i + 1;
-            }
-        }
-
-        // إذا كان هناك عناصر زائدة عن استيعاب الصفحة الأولى
-        if (page1Count < items.length) {
+        if (page2Items.length > 0) {
             overflowPage.style.display = 'block';
-            for (let i = page1Count; i < items.length; i++) {
+            page2Items.forEach((item, idx) => {
+                const actualIdx = page1Cutoff + idx;
                 const tr = document.createElement('tr');
-                tr.setAttribute('data-row', i);
-                tr.innerHTML = buildRowHtml(items[i], i);
+                tr.setAttribute('data-row', actualIdx);
+                tr.innerHTML = buildRowHtml(item, actualIdx);
                 itemsTbody2.appendChild(tr);
-            }
-            // نقل الإجمالي والختم تحت جدول الصفحة الثانية
+            });
             tableSection2.after(summaryAndStampBlock);
+        } else {
+            overflowPage.style.display = 'none';
+            tableSection1.after(summaryAndStampBlock);
         }
 
         updateTotals();
