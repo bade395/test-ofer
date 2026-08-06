@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "FORD TAURUS", "KIA CARNIVAL", "HYUNDAI STARIA STANDARD 9 SEATER", "HYUNDAI STARIA 7 SEATER LUXURY", "CHEVROLET SUBURBAN 4X2",
         "TOYOTA FORTUNER GX2 4X4 (4CYL)", "NISSAN X-TRAIL", "GEELY TUGELLA FULL OPTION", "TOYOTA PRADO TX (4 CYL)", "FORD EXPLORER",
         "CHEVROLET TAHOE 4X4", "FORD BRONCO", "TOYOTA PRADO 6 CYL", "TOYOTA LANDCRUISER GXR", "NISSAN PATROL 6CYL",
-        "RANGE ROVER EVOQUE R- DYNAMIC S", "AUDI Q5", "MERCEDES GLC C200", "BMW X4", "AUDI Q8", "MERCEDES A CLASS", "BMX X2",
+        "RANGE ROVER EVOQUE R- DDYNAMIC S", "AUDI Q5", "MERCEDES GLC C200", "BMW X4", "AUDI Q8", "MERCEDES A CLASS", "BMX X2",
         "MERCEDES C CLASS", "GENESIS G80", "MERCEDES CLA 200", "AUDI Q3", "MERCEDES E CLASS", "BMW 5 SERIES", "MERCEDES VIANO",
         "BMW 730", "AUDI A8", "MERCEDES S450", "ISUZU DMAX DOUBLE CAB 4X2 MANUAL 4 CYLINDER", "ISUZU DMAX DOUBLE CAB 4X4 MANUAL 4 CYLINDER",
         "ISUZU LS DOUBLE CAB 4X2 MANUAL 6 CYLINDER", "ISUZU LS DOUBLE CAB 4X4 MANUAL 6 CYLINDER", "ISUZU LS DOUBLE CAB 4X4 AUTOMATIC 6 CYLINDER",
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let items = JSON.parse(JSON.stringify(defaultItems));
 
-    // DOM Elements
     const itemsTbody = document.getElementById('items-tbody');
     const itemsTbody2 = document.getElementById('items-tbody-2');
     const overflowPage = document.getElementById('page-overflow-items');
@@ -43,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const quoteDateInput = document.getElementById('quote-date');
     const quoteRefInput = document.getElementById('quote-ref');
 
-    // Controls
     const btnAddItem = document.getElementById('btn-add-item');
     const btnGenRef = document.getElementById('btn-gen-ref');
     const btnReset = document.getElementById('btn-reset');
@@ -169,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const page1Items = items.slice(0, MAX_PAGE1_ITEMS);
         const page2Items = items.slice(MAX_PAGE1_ITEMS);
 
-        // Render Page 1 Table
         page1Items.forEach((item, idx) => {
             const tr = document.createElement('tr');
             tr.setAttribute('data-row', idx);
@@ -177,7 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
             itemsTbody.appendChild(tr);
         });
 
-        // Manage Page Overflow (Page 2) & Third Page Layout Dynamically
         if (page2Items.length > 0) {
             overflowPage.style.display = 'block';
             page2Items.forEach((item, idx) => {
