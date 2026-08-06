@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let row = itemsTbody.rows[index];
             if (!row && itemsTbody2) {
-                row = itemsTbody2.rows[index - 7];
+                row = itemsTbody2.rows[index - 11];
             }
 
             if (row) {
@@ -167,7 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
         itemsTbody.innerHTML = '';
         if (itemsTbody2) itemsTbody2.innerHTML = '';
 
-        const MAX_PAGE1_ITEMS = 7;
+        // تم رفع حد الصفحة الأولى إلى 11 صفاً حتى تمتلئ الورقة بالكامل
+        const MAX_PAGE1_ITEMS = 11;
         const page1Items = items.slice(0, MAX_PAGE1_ITEMS);
         const page2Items = items.slice(MAX_PAGE1_ITEMS);
 
@@ -178,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
             itemsTbody.appendChild(tr);
         });
 
-        // إذا كان هناك صفوف زائدة، تظهر الصفحة 2 ونقل الختم والإجماليات تحت جدول الصفحة 2
         if (page2Items.length > 0) {
             overflowPage.style.display = 'block';
             page2Items.forEach((item, idx) => {
@@ -188,11 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 tr.innerHTML = buildRowHtml(item, actualIdx);
                 itemsTbody2.appendChild(tr);
             });
-            // نقل الختم والإجمالي مباشرة تحت جدول الصفحة الثانية
             tableSection2.after(summaryAndStampBlock);
         } else {
             overflowPage.style.display = 'none';
-            // إرجاع الختم والإجمالي ليصبح مباشرة تحت جدول الصفحة الأولى
             tableSection1.after(summaryAndStampBlock);
         }
 
