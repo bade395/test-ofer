@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "FORD TAURUS", "KIA CARNIVAL", "HYUNDAI STARIA STANDARD 9 SEATER", "HYUNDAI STARIA 7 SEATER LUXURY", "CHEVROLET SUBURBAN 4X2",
         "TOYOTA FORTUNER GX2 4X4 (4CYL)", "NISSAN X-TRAIL", "GEELY TUGELLA FULL OPTION", "TOYOTA PRADO TX (4 CYL)", "FORD EXPLORER",
         "CHEVROLET TAHOE 4X4", "FORD BRONCO", "TOYOTA PRADO 6 CYL", "TOYOTA LANDCRUISER GXR", "NISSAN PATROL 6CYL",
-        "RANGE ROVER EVOQUE R- DDYNAMIC S", "AUDI Q5", "MERCEDES GLC C200", "BMW X4", "AUDI Q8", "MERCEDES A CLASS", "BMX X2",
+        "RANGE ROVER EVOQUE R- DYNAMIC S", "AUDI Q5", "MERCEDES GLC C200", "BMW X4", "AUDI Q8", "MERCEDES A CLASS", "BMX X2",
         "MERCEDES C CLASS", "GENESIS G80", "MERCEDES CLA 200", "AUDI Q3", "MERCEDES E CLASS", "BMW 5 SERIES", "MERCEDES VIANO",
         "BMW 730", "AUDI A8", "MERCEDES S450", "ISUZU DMAX DOUBLE CAB 4X2 MANUAL 4 CYLINDER", "ISUZU DMAX DOUBLE CAB 4X4 MANUAL 4 CYLINDER",
         "ISUZU LS DOUBLE CAB 4X2 MANUAL 6 CYLINDER", "ISUZU LS DOUBLE CAB 4X4 MANUAL 6 CYLINDER", "ISUZU LS DOUBLE CAB 4X4 AUTOMATIC 6 CYLINDER",
@@ -35,6 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemsTbody = document.getElementById('items-tbody');
     const itemsTbody2 = document.getElementById('items-tbody-2');
     const overflowPage = document.getElementById('page-overflow-items');
+    
+    const tableSection1 = document.getElementById('table-section-1');
+    const tableSection2 = document.getElementById('table-section-2');
+    const summaryAndStampBlock = document.getElementById('quote-summary-and-stamp');
 
     const sumNetElem = document.getElementById('sum-net');
     const sumVatElem = document.getElementById('sum-vat');
@@ -174,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             itemsTbody.appendChild(tr);
         });
 
+        // إذا كان هناك صفوف زائدة، تظهر الصفحة 2 ونقل الختم والإجماليات تحت جدول الصفحة 2
         if (page2Items.length > 0) {
             overflowPage.style.display = 'block';
             page2Items.forEach((item, idx) => {
@@ -183,8 +188,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 tr.innerHTML = buildRowHtml(item, actualIdx);
                 itemsTbody2.appendChild(tr);
             });
+            // نقل الختم والإجمالي مباشرة تحت جدول الصفحة الثانية
+            tableSection2.after(summaryAndStampBlock);
         } else {
             overflowPage.style.display = 'none';
+            // إرجاع الختم والإجمالي ليصبح مباشرة تحت جدول الصفحة الأولى
+            tableSection1.after(summaryAndStampBlock);
         }
 
         updateTotals();
