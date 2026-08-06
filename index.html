@@ -44,7 +44,7 @@
 
     <main class="document-wrapper">
         
-        <!-- الصفحة الأولى: جدول 1 + الإجمالي تحت الجدول مباشر + الختم -->
+        <!-- PAGE 1 -->
         <div class="a4-page page-1">
             <header class="doc-header-fixed">
                 <div class="company-brand">
@@ -84,7 +84,7 @@
                         <p class="intro-text">يسعدنا ان نقدم لكم عرض السعر الخاصة بخدمة تأجير المركبات والموضح بياناتها في الجدول التالي</p>
                     </section>
 
-                    <section class="items-table-section">
+                    <section class="items-table-section" id="table-section-1">
                         <table class="quote-table" id="items-table">
                             <thead>
                                 <tr>
@@ -103,8 +103,10 @@
                                 <!-- Dynamic Rows Page 1 -->
                             </tbody>
                         </table>
+                    </section>
 
-                        <!-- جدول الإجماليات لاصق بجدول البنود -->
+                    <!-- العنصر الذي يحوي الإجمالي والختم (سيتحرك تلقائياً تحت آخر صف) -->
+                    <div id="quote-summary-and-stamp">
                         <div class="totals-summary-container">
                             <table class="totals-table">
                                 <colgroup>
@@ -125,21 +127,21 @@
                                 </tr>
                             </table>
                         </div>
-                    </section>
 
-                    <!-- الختم مباشرة بعد جدول الإجماليات -->
-                    <div class="closing-section-wrapper">
-                        <p class="closing-wish">املين ان ينال عرضنا هذا رضاكم</p>
-                        <div class="closing-salutation-bottom">
-                            <p class="salutation-text">،مع خالص التحية والتقدير</p>
-                            <div class="company-sign-wrapper">
-                                <h4 class="company-sign-title">شركة النسر الثاقب</h4>
-                                <div class="official-stamp-box">
-                                    <img src="https://i.postimg.cc/HnCsLd96/alkhtm-222.png" alt="الختم الرسمي لشركة النسر الثاقب" class="official-stamp-img">
+                        <div class="closing-section-wrapper">
+                            <p class="closing-wish">املين ان ينال عرضنا هذا رضاكم</p>
+                            <div class="closing-salutation-bottom">
+                                <p class="salutation-text">،مع خالص التحية والتقدير</p>
+                                <div class="company-sign-wrapper">
+                                    <h4 class="company-sign-title">شركة النسر الثاقب</h4>
+                                    <div class="official-stamp-box">
+                                        <img src="https://i.postimg.cc/HnCsLd96/alkhtm-222.png" alt="الختم الرسمي لشركة النسر الثاقب" class="official-stamp-img">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -154,7 +156,7 @@
             </footer>
         </div>
 
-        <!-- الصفحة الثانية: تكملة البنود (تظهر وتختفي ديناميكياً) -->
+        <!-- PAGE 2 -->
         <div class="a4-page page-2" id="page-overflow-items" style="display: none;">
             <header class="doc-header-fixed">
                 <div class="company-brand">
@@ -173,7 +175,7 @@
                         <h2 class="doc-title">عرض اسعار (تكملة البنود)</h2>
                     </div>
 
-                    <section class="items-table-section">
+                    <section class="items-table-section" id="table-section-2">
                         <table class="quote-table" id="items-table-2">
                             <thead>
                                 <tr>
@@ -207,7 +209,7 @@
             </footer>
         </div>
 
-        <!-- الصفحة (ثابتة): الشروط والأحكام والحساب البنكي -->
+        <!-- PAGE TERMS & BANK -->
         <div class="a4-page page-terms" id="page-terms-bank">
             <header class="doc-header-fixed">
                 <div class="company-brand">
@@ -226,12 +228,10 @@
                         <div class="bilingual-terms-grid">
                             <div class="terms-col-ar">
                                 <h3 class="terms-title">الشروط والأحكام : -</h3>
-                                
                                 <div class="term-unit">
                                     <div class="term-ar-head">.1 صلاحية عرض السعر</div>
                                     <p class="term-ar-text">يسري عرض السعر لمدة ( 3 ) أيام من تاريخ إصداره، ويُعد لاغياً تلقائياً بعد انتهاء المدة ما لم يتم اعتماده خطياً من الطرفين</p>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-ar-head">.2 الأسعار</div>
                                     <ul class="term-list-ar">
@@ -240,7 +240,6 @@
                                         <li>يحق للشركة تعديل الأسعار في حال تغير مدة الإيجار أو المواصفات المطلوبة</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-ar-head">.3 شروط الدفع</div>
                                     <ul class="term-list-ar">
@@ -249,14 +248,12 @@
                                         <li>في حال التأخير في السداد يحق للشركة إيقاف الخدمة دون أي مسؤولية</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-ar-head">4.التأمين</div>
                                     <ul class="term-list-ar">
                                         <li>جميع المركبات مؤمّنة تأميناً شاملاً / ضد الغير حسب نوع العقد</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-ar-head">.5 استخدام المركبة</div>
                                     <ul class="term-list-ar">
@@ -264,7 +261,6 @@
                                         <li>يلتزم المستأجر باستخدام المركبة داخل حدود المملكة العربية السعودية فقط، ما لم يتم الاتفاق خلاف ذلك</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-ar-head">.6 الصيانه والأعطال</div>
                                     <ul class="term-list-ar">
@@ -272,7 +268,6 @@
                                         <li>يتحمل المستأجر الأعطال الناتجة عن سوء الاستخدام أو الإهمال</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-ar-head">.7 التسليم والاستلام</div>
                                     <ul class="term-list-ar">
@@ -281,7 +276,6 @@
                                         <li>في حال التأخير عن موعد التسليم يتم احتساب غرامة إضافية حسب سياسة الشركة</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-ar-head">.8 الإلغاء</div>
                                     <ul class="term-list-ar">
@@ -289,21 +283,18 @@
                                         <li>لا تُسترد المبالغ المدفوعة في حال بدء فترة الإيجار</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-ar-head">.9 الاختصاص القضائي</div>
                                     <p class="term-ar-text">تخضع هذه الشروط والأحكام لأنظمة وقوانين المملكة العربية السعودية، ويكون الاختصاص القضائي لمحاكمها المختصة.</p>
                                 </div>
                             </div>
 
-                            <div class="term-col-en" dir="ltr">
+                            <div class="terms-col-en" dir="ltr">
                                 <h3 class="terms-title-en">Terms & Conditions :-</h3>
-                                
                                 <div class="term-unit">
                                     <div class="term-en-head">1. Quotation Validity</div>
                                     <p class="term-en-text">The quote is valid for (3) days from the date of issuance, and is automatically void after the expiry of the period unless approved in writing by both parties</p>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-en-head">2. Pricing</div>
                                     <ul class="term-list-en">
@@ -312,7 +303,6 @@
                                         <li>The company has the right to amend the prices in case of a change in the lease period or the required specifications.</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-en-head">3. Payment Terms</div>
                                     <ul class="term-list-en">
@@ -321,14 +311,12 @@
                                         <li>In case of delay in payment, the company has the right to suspend the service without any liability</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-en-head">4. Insurance</div>
                                     <ul class="term-list-en">
                                         <li>All vehicles are insured comprehensively/against third parties depending on the type of contract</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-en-head">5. Use of the vehicle</div>
                                     <ul class="term-list-en">
@@ -336,7 +324,6 @@
                                         <li>The Lessor is obliged to use the Vehicle only within the borders of the Kingdom of Saudi Arabia, unless otherwise agreed</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-en-head">6. Maintenance and Breakdowns</div>
                                     <ul class="term-list-en">
@@ -344,7 +331,6 @@
                                         <li>Breakdowns resulting from misuse or negligence are borne by the tenant</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-en-head">7. Delivery & Receipt</div>
                                     <ul class="term-list-en">
@@ -353,7 +339,6 @@
                                         <li>In case of delay in the delivery date, an additional penalty will be calculated according to the company's policy.</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-en-head">8. Cancellation</div>
                                     <ul class="term-list-en">
@@ -361,7 +346,6 @@
                                         <li>No refunds if the lease period starts</li>
                                     </ul>
                                 </div>
-
                                 <div class="term-unit">
                                     <div class="term-en-head">9. Jurisdiction</div>
                                     <p class="term-en-text">These Terms and Conditions shall be governed by the laws and regulations of the Kingdom of Saudi Arabia, and the jurisdiction shall be vested in its competent courts.</p>
