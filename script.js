@@ -268,17 +268,47 @@ document.addEventListener('DOMContentLoaded', () => {
         window.print();
     });
 
-    // تصدير PDF بطريقة الطباعة المباشرة لضمان مقاس A4 كامل وبدون صفحات بيضاء
-    btnExportPdf.addEventListener('click', () => {
-        const originalTitle = document.title;
+    // تنزيل ملف PDF مباشر مع معالجة الأبعاد تلقائياً بدون الشاشة البيضاء
+    btnExportPdf.addEventListener('click', async () => {
+        const element = document.getElementById('document-to-pdf');
         const refVal = quoteRefInput.value || 'Quotation';
         
-        document.title = `عرض_سعر_${refVal}`;
-        window.print();
-        
-        setTimeout(() => {
-            document.title = originalTitle;
-        }, 1000);
+        btnExportPdf.innerText = 'جاري التحميل...';
+        btnExportPdf.disabled = true;
+
+        // تهيئة محيط الصفحة أثناء التصوير لمنع تحرك الفوتر والسطور
+        document.body.classList.add('rendering-pdf');
+
+        if (document.fonts) {
+            await document.fonts.ready;
+        }
+
+        const opt = {
+            margin:       0,
+            filename:     `عرض_سعر_${refVal}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                letterRendering: true,
+                scrollY: 0,
+                scrollX: 0
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+            pagebreak:    { mode: ['css', 'legacy'] }
+        };
+
+        try {
+            await html2pdf().set(opt).from(element).save();
+        } catch (err) {
+            console.error(err);
+            alert('حدث خطأ أثناء تنزيل الملف، يرجى المحاولة مرة أخرى.');
+        } finally {
+            document.body.classList.remove('rendering-pdf');
+            btnExportPdf.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> تصدير PDF`;
+            btnExportPdf.disabled = false;
+        }
     });
 
     generateAutoMeta();
