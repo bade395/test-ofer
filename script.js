@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // جعل القيم الأولية فارغة / مصفرة
     const defaultItems = [
         { carType: 'HYUNDAI GRAND i10', quantity: '', duration: '', typeOfRent: 'Yearly / سنوي', rentalPrice: '', isCustom: false }
     ];
@@ -48,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAddItem = document.getElementById('btn-add-item');
     const btnGenRef = document.getElementById('btn-gen-ref');
     const btnReset = document.getElementById('btn-reset');
-    const btnPrintPdf = document.getElementById('btn-print-pdf');
+    const btnPrint = document.getElementById('btn-print');
+    const btnExportPdf = document.getElementById('btn-export-pdf');
 
     const MAX_PAGE1_CAPACITY = 20;
 
@@ -264,8 +264,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    btnPrintPdf.addEventListener('click', () => {
+    // 1. إجراء زر الطباعة العادي
+    btnPrint.addEventListener('click', () => {
         window.print();
+    });
+
+    // 2. إجراء زر التصدير والتحميل المباشر كملف PDF لجوالات الأندرويد والآيفون والكمبيوتر
+    btnExportPdf.addEventListener('click', () => {
+        const element = document.getElementById('document-to-pdf');
+        const refVal = quoteRefInput.value || 'Quotation';
+        
+        // تغيير حالة الزر مؤقتاً للتوضيح للعميل
+        btnExportPdf.innerText = 'جاري التصدير...';
+        btnExportPdf.disabled = true;
+
+        const opt = {
+            margin:       0,
+            filename:     `عرض_سعر_${refVal}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, logging: false },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            btnExportPdf.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> تصدير PDF`;
+            btnExportPdf.disabled = false;
+        }).catch(err => {
+            console.error(err);
+            alert('حدث خطأ أثناء تصدير الملف، يرجى المحاولة مرة أخرى.');
+            btnExportPdf.innerHTML = `تصدير PDF`;
+            btnExportPdf.disabled = false;
+        });
     });
 
     generateAutoMeta();
