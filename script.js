@@ -264,26 +264,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 1. إجراء زر الطباعة العادي
     btnPrint.addEventListener('click', () => {
         window.print();
     });
 
-    // 2. إجراء زر التصدير والتحميل المباشر كملف PDF لجوالات الأندرويد والآيفون والكمبيوتر
-    btnExportPdf.addEventListener('click', () => {
+    // تحسين دالة التصدير لمنع تشوه الحروف والفواصل
+    btnExportPdf.addEventListener('click', async () => {
         const element = document.getElementById('document-to-pdf');
         const refVal = quoteRefInput.value || 'Quotation';
         
-        // تغيير حالة الزر مؤقتاً للتوضيح للعميل
-        btnExportPdf.innerText = 'جاري التصدير...';
+        btnExportPdf.innerText = 'جاري المعالجة...';
         btnExportPdf.disabled = true;
+
+        // التأكد من تحميل كافة الخطوط لعدم لغبطة النص العربي "النسر الثاقب"
+        if (document.fonts) {
+            await document.fonts.ready;
+        }
 
         const opt = {
             margin:       0,
             filename:     `عرض_سعر_${refVal}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, logging: false },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                letterRendering: true
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['css', 'legacy'] }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
