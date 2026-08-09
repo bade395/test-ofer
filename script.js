@@ -268,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.print();
     });
 
-    // تحسين دالة التصدير لمنع تشوه الحروف والفواصل
     btnExportPdf.addEventListener('click', async () => {
         const element = document.getElementById('document-to-pdf');
         const refVal = quoteRefInput.value || 'Quotation';
@@ -276,7 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btnExportPdf.innerText = 'جاري المعالجة...';
         btnExportPdf.disabled = true;
 
-        // التأكد من تحميل كافة الخطوط لعدم لغبطة النص العربي "النسر الثاقب"
+        document.body.classList.add('rendering-pdf');
+
         if (document.fonts) {
             await document.fonts.ready;
         }
@@ -289,17 +289,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 scale: 2, 
                 useCORS: true, 
                 logging: false,
-                letterRendering: true
+                letterRendering: true,
+                windowWidth: 1200
             },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
             pagebreak:    { mode: ['css', 'legacy'] }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
+            document.body.classList.remove('rendering-pdf');
             btnExportPdf.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> تصدير PDF`;
             btnExportPdf.disabled = false;
         }).catch(err => {
             console.error(err);
+            document.body.classList.remove('rendering-pdf');
             alert('حدث خطأ أثناء تصدير الملف، يرجى المحاولة مرة أخرى.');
             btnExportPdf.innerHTML = `تصدير PDF`;
             btnExportPdf.disabled = false;
