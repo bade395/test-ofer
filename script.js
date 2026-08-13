@@ -276,49 +276,202 @@ document.addEventListener('DOMContentLoaded', () => {
         window.print();
     });
 
-    btnExportPdf.addEventListener('click', async () => {
-        const element = document.getElementById('document-to-pdf');
-        const refVal = quoteRefInput.value || 'Quotation';
-        
-        btnExportPdf.innerText = 'جاري التحميل...';
-        btnExportPdf.disabled = true;
+    // تصدير PDF ثابت بمقاس A4 — يعمل بنفس أبعاد الطباعة على الكمبيوتر حتى من الجوال.
+    // بدلاً من تمرير document-wrapper بالكامل إلى html2pdf، يتم رسم كل صفحة A4 منفصلة
+    // داخل Canvas بعرض ثابت ثم إدراجها في jsPDF بمقاس 210 × 297 مم.
+    async function exportPdfAsA4() {
+        const pages = Array.from(document.querySelectorAll('#document-to-pdf .a4-page'))
+            .filter(page => getComputedStyle(page).display !== 'none');
 
-        // Force desktop viewport layout during PDF rendering so mobile screens produce identical output
-        document.body.classList.add('rendering-pdf');
+        if (!pages.length) throw new Error('No printable pages found');
+        if (typeof html2canvas !== 'function') throw new Error('html2canvas is not loaded');
 
-        if (document.fonts) {
-            await document.fonts.ready;
-        }
+        const jsPDFCtor = window.jspdf && window.jspdf.jsPDF
+            ? window.jspdf.jsPDF
+            : window.jsPDF;
+        if (typeof jsPDFCtor !== 'function') throw new Error('jsPDF is not loaded');
 
-        // A4 standard width in standard screen pixels (96 DPI): 210mm = ~794px
-        const TARGET_WIDTH = 794;
+        const A4_WIDTH_MM = 210;
+        const A4_HEIGHT_MM = 297;
+        const A4_WIDTH_PX = 794;  // 210mm @ 96 CSS px/inch ≈ 793.7px
+        const A4_HEIGHT_PX = 1123; // 297mm @ 96 CSS px/inch ≈ 1122.5px
+        const renderScale = Math.min(2, Math.max(1.5, window.devicePixelRatio || 1));
 
-        const opt = {
-            margin:       0,
-            filename:     `عرض_سعر_${refVal}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-                scale: 2, 
-                useCORS: true, 
-                logging: false,
-                letterRendering: true,
-                scrollY: 0,
-                scrollX: 0,
-                windowWidth: TARGET_WIDTH,
-                width: TARGET_WIDTH
-            },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-            pagebreak:    { mode: ['css', 'legacy'] }
+        const pdf = new jsPDFCtor({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4',
+            compress: true,
+            putOnlyUsedFonts: true
+        });
+
+        // حاوية خارج الشاشة لا تتأثر بعرض شاشة الجوال أو zoom/scroll الخاص بالمتصفح.
+        const stage = document.createElement('div');
+        stage.id = 'pdf-export-stage';
+        stage.setAttribute('aria-hidden', 'true');
+        stage.style.cssText = [
+            'position:fixed',
+            'left:-100000px',
+            'top:0',
+            'width:' + A4_WIDTH_PX + 'px',
+            'height:' + A4_HEIGHT_PX + 'px',
+            'overflow:hidden',
+            'margin:0',
+            'padding:0',
+            'background:#ffffff',
+            'z-index:-1',
+            'pointer-events:none'
+        ].join(';');
+        document.body.appendChild(stage);
+
+        const exportStyle = document.createElement('style');
+        exportStyle.textContent = `
+            #pdf-export-stage,
+            #pdf-export-stage * { box-sizing: border-box !important; }
+            #pdf-export-stage .a4-page {
+                width: 210mm !important;
+                height: 297mm !important;
+                min-width: 210mm !important;
+                max-width: 210mm !important;
+                min-height: 297mm !important;
+                max-height: 297mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+                position: relative !important;
+                display: block !important;
+                box-shadow: none !important;
+                border: 0 !important;
+                page-break-after: auto !important;
+                break-after: auto !important;
+                transform: none !important;
+                zoom: 1 !important;
+                background-size: 100% 100% !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            #pdf-export-stage .no-print { display: none !important; }
+            #pdf-export-stage .editable-field {
+                border-color: transparent !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                outline: none !important;
+            }
+            #pdf-export-stage .table-select,
+            #pdf-export-stage .car-type-select {
+                appearance: none !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                border: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                outline: none !important;
+            }
+            #pdf-export-stage .terms-box textarea {
+                border: 0 !important;
+                background: transparent !important;
+                resize: none !important;
+            }
+        `;
+        stage.appendChild(exportStyle);
+
+        const waitForImages = async (root) => {
+            const images = Array.from(root.querySelectorAll('img'));
+            await Promise.all(images.map(img => {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                return new Promise(resolve => {
+                    const done = () => resolve();
+                    img.addEventListener('load', done, { once: true });
+                    img.addEventListener('error', done, { once: true });
+                    setTimeout(done, 4000);
+                });
+            }));
+        };
+
+        const syncFormValues = (source, clone) => {
+            const sourceFields = source.querySelectorAll('input, textarea, select');
+            const cloneFields = clone.querySelectorAll('input, textarea, select');
+            sourceFields.forEach((field, index) => {
+                const target = cloneFields[index];
+                if (!target) return;
+                if (field.tagName === 'TEXTAREA') {
+                    target.value = field.value;
+                    target.textContent = field.value;
+                } else if (field.tagName === 'SELECT') {
+                    Array.from(target.options).forEach(option => {
+                        option.selected = option.value === field.value;
+                    });
+                    target.setAttribute('data-pdf-value', field.value);
+                } else {
+                    target.value = field.value;
+                    target.setAttribute('value', field.value);
+                }
+            });
         };
 
         try {
-            await html2pdf().set(opt).from(element).save();
+            if (document.fonts) await document.fonts.ready;
+
+            for (let i = 0; i < pages.length; i++) {
+                const sourcePage = pages[i];
+                const clone = sourcePage.cloneNode(true);
+                syncFormValues(sourcePage, clone);
+                stage.appendChild(clone);
+
+                await waitForImages(clone);
+                // إعطاء المتصفح فرصة لحساب mm/الخطوط/الخلفيات قبل التصوير.
+                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+                const canvas = await html2canvas(clone, {
+                    scale: renderScale,
+                    width: A4_WIDTH_PX,
+                    height: A4_HEIGHT_PX,
+                    windowWidth: A4_WIDTH_PX,
+                    windowHeight: A4_HEIGHT_PX,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: '#ffffff',
+                    imageTimeout: 15000,
+                    logging: false,
+                    removeContainer: true
+                });
+
+                if (i > 0) pdf.addPage('a4', 'portrait');
+
+                // PNG يحافظ على حدة النص والخطوط أفضل من JPEG، خصوصاً في عروض الأسعار.
+                const imageData = canvas.toDataURL('image/png');
+                pdf.addImage(imageData, 'PNG', 0, 0, A4_WIDTH_MM, A4_HEIGHT_MM, undefined, 'FAST');
+
+                stage.removeChild(clone);
+            }
+
+            const refVal = quoteRefInput.value || 'Quotation';
+            pdf.save(`عرض_سعر_${refVal}.pdf`);
+        } finally {
+            stage.remove();
+        }
+    }
+
+    btnExportPdf.addEventListener('click', async () => {
+        const refVal = quoteRefInput.value || 'Quotation';
+        const originalLabel = btnExportPdf.innerHTML;
+
+        btnExportPdf.innerText = 'جاري تجهيز PDF...';
+        btnExportPdf.disabled = true;
+        document.body.classList.add('rendering-pdf');
+
+        try {
+            await exportPdfAsA4();
         } catch (err) {
-            console.error(err);
+            console.error('PDF export error:', err);
             alert('حدث خطأ أثناء تنزيل الملف، يرجى المحاولة مرة أخرى.');
         } finally {
             document.body.classList.remove('rendering-pdf');
-            btnExportPdf.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> تصدير PDF`;
+            btnExportPdf.innerHTML = originalLabel;
             btnExportPdf.disabled = false;
         }
     });
@@ -354,31 +507,3 @@ document.addEventListener('DOMContentLoaded', () => {
     renderItems();
 
 });
-function exportToPDF() {
-    // تحديد عنصر الفاتورة/عرض الأسعار فقط وليس الصفحة كاملة
-    const element = document.getElementById('invoice-container');
-
-    // إعدادات الخيارات لمنع الصفحات البيضاء والإزاحة الجانبية
-    const opt = {
-        margin:       0, // إلغاء الهوامش الخارجيّة لمنع الانزياح
-        filename:     'عرض_أسعار_النسر_الثاقب.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { 
-            scale: 2,             // دقة عالية للطباعة
-            useCORS: true,        // لتحميل الشعارات والختم دون مشاكل
-            scrollX: 0,
-            scrollY: 0,
-            windowWidth: element.clientWidth // ضبط العرض طبقاً للحاوية فقط
-        },
-        jsPDF:        { 
-            unit: 'mm', 
-            format: 'a4', 
-            orientation: 'portrait' 
-        },
-        // منع تقسيم الصفحة تلقائياً وإنشاء صفحات فارغة
-        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-    };
-
-    // تنفيذ التصدير
-    html2pdf().set(opt).from(element).save();
-}
