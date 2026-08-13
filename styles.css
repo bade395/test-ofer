@@ -744,25 +744,72 @@ body {
 }
 
 /* ----------------------------------------------------
-   11. PDF Rendering Helper Classes
+   11. PDF Rendering Helper Classes (For Mobile & Desktop)
    ---------------------------------------------------- */
 body.rendering-pdf {
     background-color: #ffffff !important;
     padding: 0 !important;
     margin: 0 !important;
+    width: 210mm !important;
+}
+
+body.rendering-pdf .no-print,
+body.rendering-pdf .btn-toggle-select,
+body.rendering-pdf .row-action-col {
+    display: none !important;
 }
 
 body.rendering-pdf .document-wrapper {
     margin: 0 !important;
     gap: 0 !important;
+    width: 210mm !important;
 }
 
 body.rendering-pdf .a4-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
     box-shadow: none !important;
     margin: 0 !important;
     border: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: url('https://i.postimg.cc/Bbs40NJc/alkhlfyt.jpg') no-repeat center center / 100% 100% !important;
 }
 
+/* إلغاء حدود الحقول والتحكم في مظاهر المنسدلات أثناء التصدير */
+body.rendering-pdf .editable-field,
+body.rendering-pdf .table-input {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+body.rendering-pdf .terms-box textarea {
+    border: none !important;
+    background: transparent !important;
+    resize: none !important;
+}
+
+body.rendering-pdf .table-select, 
+body.rendering-pdf .car-type-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    font-size: 0.74rem !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+    text-align: center !important;
+    text-align-last: center !important;
+    width: 100% !important;
+    padding: 0 !important;
+}
 /* ----------------------------------------------------
    12. Print Media Rules (@media print)
    ---------------------------------------------------- */
