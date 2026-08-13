@@ -34,7 +34,6 @@ body {
     line-height: 1.35;
     min-height: 100vh;
     padding-bottom: 40px;
-    -webkit-text-size-adjust: 100%;
 }
 
 /* ----------------------------------------------------
@@ -80,7 +79,6 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
 .btn {
@@ -126,29 +124,6 @@ body {
     transform: translateY(-1px);
 }
 
-@media (max-width: 768px) {
-    .admin-control-bar {
-        padding: 8px 12px;
-    }
-    .control-bar-container {
-        justify-content: center;
-    }
-    .brand-badge span {
-        font-size: 0.9rem;
-    }
-    .control-actions {
-        width: 100%;
-        justify-content: center;
-    }
-    .btn {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-    body {
-        overflow-x: auto;
-    }
-}
-
 /* ----------------------------------------------------
    4. Document Preview Container & Pages Layout
    ---------------------------------------------------- */
@@ -158,13 +133,10 @@ body {
     align-items: center;
     gap: 40px;
     margin-top: 30px;
-    width: 100%;
 }
 
 .a4-page {
     width: 210mm;
-    min-width: 210mm;
-    max-width: 210mm;
     height: 297mm;
     min-height: 297mm;
     max-height: 297mm;
@@ -616,13 +588,14 @@ body {
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
 }
 
+/* الملاحظات والشروط المترجمة أسفل الختم (ضبط اتجاه العربي للجهة اليمنى والإنجليزي لليسار) */
 .terms-translation-container {
     display: flex;
     justify-content: space-between;
     gap: 15px;
     margin-top: 10px;
     width: 100%;
-    direction: rtl;
+    direction: rtl; /* وضع الاتجاه العام لليمين لتوافق العربية يمين والإنجليزي يسار */
 }
 
 .terms-box {
@@ -777,101 +750,19 @@ body.rendering-pdf {
     background-color: #ffffff !important;
     padding: 0 !important;
     margin: 0 !important;
-    width: 210mm !important;
 }
 
 body.rendering-pdf .document-wrapper {
     margin: 0 !important;
     gap: 0 !important;
-    width: 210mm !important;
 }
 
 body.rendering-pdf .a4-page {
     box-shadow: none !important;
     margin: 0 !important;
     border: none !important;
-    width: 210mm !important;
-    min-width: 210mm !important;
-    max-width: 210mm !important;
 }
 
-body.rendering-pdf .no-print,
-body.rendering-pdf .row-action-col,
-body.rendering-pdf .btn-toggle-select {
-    display: none !important;
-}
-
-body.rendering-pdf .editable-field {
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    outline: none !important;
-    padding: 0 !important;
-}
-
-body.rendering-pdf .terms-box textarea {
-    border: none !important;
-    background: transparent !important;
-    resize: none !important;
-}
-
-body.rendering-pdf .table-select,
-body.rendering-pdf .car-type-select {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    outline: none !important;
-    font-size: 0.74rem !important;
-    font-weight: 800 !important;
-    color: #000000 !important;
-    text-align: center !important;
-    text-align-last: center !important;
-    width: 100% !important;
-    padding: 0 !important;
-}
-/* تنسيق الورقة للعرض والطباعة والتصدير */
-.page-a4 {
-    width: 210mm !important;
-    min-height: 297mm !important;
-    padding: 0 !important;
-    margin: 0 auto !important; /* يتوسط الورقة تماماً */
-    background: #ffffff !important;
-    box-sizing: border-box !important;
-    position: relative !important;
-    overflow: hidden !important; /* يمنع أي خروج للعناصر ويمنع ظهور الصفحة البيضاء الثانية */
-}
-
-/* إلغاء أي هوامش خارجية قد ترحّل الورقة لليمين أو اليسار */
-body, html {
-    margin: 0 !important;
-    padding: 0 !important;
-    background-color: #f4f4f4; /* خلفية الصفحة خارج الورقة فقط */
-}
-
-/* إعدادات الطباعة وتحويل PDF */
-@media print {
-    @page {
-        size: A4 portrait;
-        margin: 0; /* إلغاء هوامش المتصفح الافتراضية التي تسبب الزوايا البيضاء */
-    }
-    
-    body, html {
-        background: #ffffff !important;
-    }
-
-    .page-a4 {
-        margin: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        page-break-after: avoid !important;
-        break-after: avoid !important;
-    }
-}
 /* ----------------------------------------------------
    12. Print Media Rules (@media print)
    ---------------------------------------------------- */
@@ -943,110 +834,6 @@ body, html {
     }
 
     .btn-toggle-select, .row-action-col {
-        display: none !important;
-    }
-}
-/* ==========================================
-   إعدادات الطباعة وتصدير الـ PDF للجوال والكمبيوتر
-   ========================================== */
-@media print {
-    /* 1. ضبط أبعاد الصفحة وإلغاء الهوامش العشوائية */
-    @page {
-        size: A4 portrait; /* أو landscape حسب تصميمك */
-        margin: 10mm;      /* هامش آمن يمنع اختفاء الزوايا */
-    }
-
-    /* 2. إعادة ضبط العناصر الأساسية لمنع الفيضان (Overflow) */
-    html, body {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: visible !important;
-        background: #ffffff !important;
-        -webkit-print-color-adjust: exact !important; /* للحفاظ على الألوان والخلفيات */
-        print-color-adjust: exact !important;
-    }
-
-    /* 3. الحاوي الرئيسي للمستند/التقرير */
-    .container, .invoice-box, .dashboard-container {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 auto !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        box-shadow: none !important;
-        border: none !important;
-        page-break-after: avoid !important;
-        break-after: avoid !important;
-    }
-
-    /* 4. منع تقطيع الأقسام أو إنشاء صفحات بيضاء مفاجئة */
-    .card, .section, table, tr, .row {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-    }
-
-    /* 5. إخفاء العناصر غير المطلوبة في الـ PDF (الأزرار، الهيدر، القوائم) */
-    .no-print, button, .btn, navbar, footer, .sidebar {
-        display: none !important;
-    }
-
-    /* 6. ضبط الجداول حتى لا تخرج عن عرض الورقة */
-    table {
-        width: 100% !important;
-        table-layout: fixed !important;
-        word-wrap: break-word !important;
-    }
-}
-/* ==========================================
-   تنسيق حاوية عرض الأسعار / الفاتورة
-   ========================================== */
-#invoice-container {
-    width: 210mm;            /* عرض ورقة A4 القياسي */
-    min-height: 297mm;       /* ارتفاع ورقة A4 القياسي */
-    padding: 15mm;           /* هوامش داخلية آمنة */
-    margin: 0 auto;
-    background-color: #ffffff;
-    box-sizing: border-box;
-    position: relative;
-    overflow: hidden;        /* يمنع بروز أي عنصر للخارج */
-}
-
-/* ==========================================
-   إعدادات الطباعة وتصدير الـ PDF الصارمة
-   ========================================== */
-@media print {
-    /* إلغاء هوامش المتصفح الافتراضية */
-    @page {
-        size: A4 portrait;
-        margin: 0;
-    }
-
-    html, body {
-        width: 210mm !important;
-        height: 297mm !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    #invoice-container {
-        width: 100% !important;
-        height: 100% !important;
-        margin: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        page-break-after: avoid !important;
-        page-break-inside: avoid !important;
-        break-after: avoid !important;
-    }
-
-    /* إخفاء الأزرار وأي عناصر خارج الفاتورة */
-    .no-print, button, .download-btn {
         display: none !important;
     }
 }
