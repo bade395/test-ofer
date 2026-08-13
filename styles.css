@@ -832,7 +832,46 @@ body.rendering-pdf .car-type-select {
     width: 100% !important;
     padding: 0 !important;
 }
+/* تنسيق الورقة للعرض والطباعة والتصدير */
+.page-a4 {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    padding: 0 !important;
+    margin: 0 auto !important; /* يتوسط الورقة تماماً */
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    overflow: hidden !important; /* يمنع أي خروج للعناصر ويمنع ظهور الصفحة البيضاء الثانية */
+}
 
+/* إلغاء أي هوامش خارجية قد ترحّل الورقة لليمين أو اليسار */
+body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #f4f4f4; /* خلفية الصفحة خارج الورقة فقط */
+}
+
+/* إعدادات الطباعة وتحويل PDF */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 0; /* إلغاء هوامش المتصفح الافتراضية التي تسبب الزوايا البيضاء */
+    }
+    
+    body, html {
+        background: #ffffff !important;
+    }
+
+    .page-a4 {
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+}
 /* ----------------------------------------------------
    12. Print Media Rules (@media print)
    ---------------------------------------------------- */
