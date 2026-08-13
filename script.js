@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (row) {
                 row.cells[5].innerHTML = lineTotal > 0 ? formatMoney(lineTotal, 2) : '0.00';
-                row.cells[7].innerHTML = lineVat > 0 ? formatMoney(lineVat, 2) : '0.00';
-                row.cells[8].innerHTML = lineGrand > 0 ? formatMoney(lineGrand, 2) : '0.00';
+                row.cells[6].innerHTML = lineVat > 0 ? formatMoney(lineVat, 2) : '0.00';
+                row.cells[7].innerHTML = lineGrand > 0 ? formatMoney(lineGrand, 2) : '0.00';
             }
         });
 
@@ -159,11 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="text" inputmode="decimal" class="editable-field table-input price-input" value="${item.rentalPrice}" data-index="${index}" data-key="rentalPrice" placeholder="0.00">
             </td>
             <td class="total-cell">${lineTotal > 0 ? formatMoney(lineTotal, 2) : '0.00'}</td>
+            <td class="total-cell">${lineVat > 0 ? formatMoney(lineVat, 2) : '0.00'}</td>
+            <td class="total-cell">${lineGrand > 0 ? formatMoney(lineGrand, 2) : '0.00'}</td>
             <td>
                 <input type="text" inputmode="decimal" class="editable-field table-input" value="${item.extraKmPrice || ''}" data-index="${index}" data-key="extraKmPrice" placeholder="0.00">
             </td>
-            <td class="total-cell">${lineVat > 0 ? formatMoney(lineVat, 2) : '0.00'}</td>
-            <td class="total-cell">${lineGrand > 0 ? formatMoney(lineGrand, 2) : '0.00'}</td>
             <td class="no-print row-action-col">
                 ${items.length > 1 ? `<button type="button" class="btn-del-row" data-index="${index}">×</button>` : ''}
             </td>
@@ -276,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.print();
     });
 
-    // تنزيل ملف PDF مباشر مع معالجة الأبعاد تلقائياً بدون الشاشة البيضاء
     btnExportPdf.addEventListener('click', async () => {
         const element = document.getElementById('document-to-pdf');
         const refVal = quoteRefInput.value || 'Quotation';
@@ -284,7 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnExportPdf.innerText = 'جاري التحميل...';
         btnExportPdf.disabled = true;
 
-        // تهيئة محيط الصفحة أثناء التصوير لمنع تحرك الفوتر والسطور
         document.body.classList.add('rendering-pdf');
 
         if (document.fonts) {
@@ -319,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // التحكم في الترجمة التلقائية لمربع الملاحظات
+    // الترجمة التلقائية لمربع الملاحظات والشروط
     const termsAr = document.getElementById('terms-ar');
     const termsEn = document.getElementById('terms-en');
     let translateTimeout;
