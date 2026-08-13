@@ -354,3 +354,31 @@ document.addEventListener('DOMContentLoaded', () => {
     renderItems();
 
 });
+function exportToPDF() {
+    // تحديد عنصر الفاتورة/عرض الأسعار فقط وليس الصفحة كاملة
+    const element = document.getElementById('invoice-container');
+
+    // إعدادات الخيارات لمنع الصفحات البيضاء والإزاحة الجانبية
+    const opt = {
+        margin:       0, // إلغاء الهوامش الخارجيّة لمنع الانزياح
+        filename:     'عرض_أسعار_النسر_الثاقب.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { 
+            scale: 2,             // دقة عالية للطباعة
+            useCORS: true,        // لتحميل الشعارات والختم دون مشاكل
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: element.clientWidth // ضبط العرض طبقاً للحاوية فقط
+        },
+        jsPDF:        { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait' 
+        },
+        // منع تقسيم الصفحة تلقائياً وإنشاء صفحات فارغة
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    // تنفيذ التصدير
+    html2pdf().set(opt).from(element).save();
+}
