@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const overflowPage = document.getElementById('page-overflow-items');
     
     const tableSection1 = document.getElementById('table-section-1');
-    const tableSection2 = document.getElementById('page-overflow-items');
+    const tableSection2 = document.getElementById('table-section-2');
     const summaryAndStampBlock = document.getElementById('quote-summary-and-stamp');
 
     const sumNetElem = document.getElementById('sum-net');
@@ -49,9 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnReset = document.getElementById('btn-reset');
     const btnPrint = document.getElementById('btn-print');
     const btnExportPdf = document.getElementById('btn-export-pdf');
-
-    const termsAr = document.getElementById('terms-ar');
-    const termsEn = document.getElementById('terms-en');
 
     const MAX_PAGE1_CAPACITY = 20;
 
@@ -92,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const dur = parseNum(item.duration, false);
             const price = parseNum(item.rentalPrice, true);
             
-            // سعر الإجمالي دون دخول سعر الكيلومتر الزائد في العملية الحسابية
             const lineTotal = qty * dur * price;
             const lineVat = lineTotal * 0.15;
             const lineGrand = lineTotal + lineVat;
@@ -107,9 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (row) {
-                row.cells[5].innerHTML = lineTotal > 0 ? formatMoney(lineTotal, 2) : '0.00'; // الإجمالي
-                row.cells[7].innerHTML = lineVat > 0 ? formatMoney(lineVat, 2) : '0.00';     // الضريبة
-                row.cells[8].innerHTML = lineGrand > 0 ? formatMoney(lineGrand, 2) : '0.00'; // الإجمالي مع الضريبة
+                row.cells[5].innerHTML = lineTotal > 0 ? formatMoney(lineTotal, 2) : '0.00';
+                row.cells[7].innerHTML = lineVat > 0 ? formatMoney(lineVat, 2) : '0.00';
+                row.cells[8].innerHTML = lineGrand > 0 ? formatMoney(lineGrand, 2) : '0.00';
             }
         });
 
@@ -163,12 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="text" inputmode="decimal" class="editable-field table-input price-input" value="${item.rentalPrice}" data-index="${index}" data-key="rentalPrice" placeholder="0.00">
             </td>
             <td class="total-cell">${lineTotal > 0 ? formatMoney(lineTotal, 2) : '0.00'}</td>
-            <!-- عمود سعر الكيلومتر الزائد (مستقل ولا يحسب في الإجمالي) -->
             <td>
                 <input type="text" inputmode="decimal" class="editable-field table-input" value="${item.extraKmPrice || ''}" data-index="${index}" data-key="extraKmPrice" placeholder="0.00">
             </td>
-            <td class="price-cell">${lineVat > 0 ? formatMoney(lineVat, 2) : '0.00'}</td>
-            <td class="price-cell">${lineGrand > 0 ? formatMoney(lineGrand, 2) : '0.00'}</td>
+            <td class="total-cell">${lineVat > 0 ? formatMoney(lineVat, 2) : '0.00'}</td>
+            <td class="total-cell">${lineGrand > 0 ? formatMoney(lineGrand, 2) : '0.00'}</td>
             <td class="no-print row-action-col">
                 ${items.length > 1 ? `<button type="button" class="btn-del-row" data-index="${index}">×</button>` : ''}
             </td>
@@ -247,33 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- خدمة الترجمة التلقائية للملاحظات والشروط ---
-    let translateTimeout;
-    if (termsAr && termsEn) {
-        termsAr.addEventListener('input', () => {
-            clearTimeout(translateTimeout);
-            const text = termsAr.value.trim();
-            
-            if (!text) {
-                termsEn.value = '';
-                return;
-            }
-
-            translateTimeout = setTimeout(() => {
-                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${encodeURIComponent(text)}`;
-                fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && data[0]) {
-                            const translatedText = data[0].map(item => item[0]).join('');
-                            termsEn.value = translatedText;
-                        }
-                    })
-                    .catch(err => console.error('Translation error:', err));
-            }, 600);
-        });
-    }
-
     btnAddItem.addEventListener('click', () => {
         items.push({
             carType: CAR_OPTIONS[0],
@@ -295,6 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('هل أنت تأكد من إعادة ضبط البيانات إلى الحالة الأصلية؟')) {
             items = JSON.parse(JSON.stringify(defaultItems));
             document.getElementById('client-name').value = '';
+            const termsAr = document.getElementById('terms-ar');
+            const termsEn = document.getElementById('terms-en');
             if (termsAr) termsAr.value = '';
             if (termsEn) termsEn.value = '';
             generateAutoMeta();
@@ -306,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.print();
     });
 
-    // تنزيل ملف PDF مباشر
+    // تنزيل ملف PDF مباشر مع معالجة الأبعاد تلقائياً بدون الشاشة البيضاء
     btnExportPdf.addEventListener('click', async () => {
         const element = document.getElementById('document-to-pdf');
         const refVal = quoteRefInput.value || 'Quotation';
@@ -314,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnExportPdf.innerText = 'جاري التحميل...';
         btnExportPdf.disabled = true;
 
+        // تهيئة محيط الصفحة أثناء التصوير لمنع تحرك الفوتر والسطور
         document.body.classList.add('rendering-pdf');
 
         if (document.fonts) {
@@ -347,6 +318,33 @@ document.addEventListener('DOMContentLoaded', () => {
             btnExportPdf.disabled = false;
         }
     });
+
+    // التحكم في الترجمة التلقائية لمربع الملاحظات
+    const termsAr = document.getElementById('terms-ar');
+    const termsEn = document.getElementById('terms-en');
+    let translateTimeout;
+
+    if (termsAr && termsEn) {
+        termsAr.addEventListener('input', () => {
+            clearTimeout(translateTimeout);
+            const text = termsAr.value.trim();
+            if (!text) {
+                termsEn.value = '';
+                return;
+            }
+
+            translateTimeout = setTimeout(() => {
+                fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${encodeURIComponent(text)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data[0]) {
+                            termsEn.value = data[0].map(item => item[0]).join('');
+                        }
+                    })
+                    .catch(err => console.error('Translation error:', err));
+            }, 500);
+        });
+    }
 
     generateAutoMeta();
     renderItems();
