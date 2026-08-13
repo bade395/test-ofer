@@ -907,3 +907,57 @@ body.rendering-pdf .car-type-select {
         display: none !important;
     }
 }
+/* ==========================================
+   إعدادات الطباعة وتصدير الـ PDF للجوال والكمبيوتر
+   ========================================== */
+@media print {
+    /* 1. ضبط أبعاد الصفحة وإلغاء الهوامش العشوائية */
+    @page {
+        size: A4 portrait; /* أو landscape حسب تصميمك */
+        margin: 10mm;      /* هامش آمن يمنع اختفاء الزوايا */
+    }
+
+    /* 2. إعادة ضبط العناصر الأساسية لمنع الفيضان (Overflow) */
+    html, body {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact !important; /* للحفاظ على الألوان والخلفيات */
+        print-color-adjust: exact !important;
+    }
+
+    /* 3. الحاوي الرئيسي للمستند/التقرير */
+    .container, .invoice-box, .dashboard-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        box-shadow: none !important;
+        border: none !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+
+    /* 4. منع تقطيع الأقسام أو إنشاء صفحات بيضاء مفاجئة */
+    .card, .section, table, tr, .row {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* 5. إخفاء العناصر غير المطلوبة في الـ PDF (الأزرار، الهيدر، القوائم) */
+    .no-print, button, .btn, navbar, footer, .sidebar {
+        display: none !important;
+    }
+
+    /* 6. ضبط الجداول حتى لا تخرج عن عرض الورقة */
+    table {
+        width: 100% !important;
+        table-layout: fixed !important;
+        word-wrap: break-word !important;
+    }
+}
