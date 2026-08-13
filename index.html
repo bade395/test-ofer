@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منظومة عروض الأسعار - شركة النسر الثاقب لتأجير السيارات</title>
-
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Rubik:ital,wght@0,300..900;1,300..900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 
-    <!-- مكتبة تحويل HTML إلى PDF بشكل مباشر وتنزيله على كافة الأجهزة -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- مكتبات التصدير إلى PDF: يتم الرسم على Canvas بمقاس A4 ثابت ثم وضع كل صفحة داخل jsPDF.
+         هذا الأسلوب يمنع اختلافات viewport الجوال من تغيير المقاس أو الاتجاه. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -150,7 +151,7 @@
                             </div>
                         </div>
 
-                        <!-- الملاحظات والشروط المترجمة أسفل الختم -->
+                        <!-- الملاحظات والشروط المترجمة أسفل الختم (العربي يمين والإنجليزي يسار) -->
                         <div class="terms-translation-container">
                             <div class="terms-box ar-box">
                                 <strong>الملاحظات والشروط:</strong>
